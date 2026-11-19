@@ -1,7 +1,8 @@
 const homeTitle = document.title;
 function updateTitle() {
-  const selected = document.querySelector('.case:target');
-  document.title = selected ? selected.querySelector('h1').textContent + ' · Андрей Липский' : homeTitle;
+  const target = document.getElementById(location.hash.slice(1));
+  const selected = target?.matches('.case') ? target : null;
+  document.title = selected ? selected.querySelector('h1').textContent + ' · ' + document.querySelector('meta[name=author]').content : homeTitle;
   if (selected) selected.focus({preventScroll:true});
 }
 window.addEventListener('hashchange', updateTitle);
@@ -19,3 +20,18 @@ document.addEventListener('click', event => {
 window.addEventListener('hashchange', () => {
   if (viewer.open) viewer.close();
 });
+
+const languageSwitch = document.querySelector('.language-switch');
+if (languageSwitch) {
+  const destination = new URL(languageSwitch.href);
+  function updateLanguageLink() {
+    destination.search = location.search;
+    destination.hash = location.hash;
+    languageSwitch.href = destination.href;
+  }
+  updateLanguageLink();
+  window.addEventListener('hashchange', updateLanguageLink);
+  languageSwitch.addEventListener('click', () => {
+    try { localStorage.setItem('android-portfolio.language', languageSwitch.hreflang); } catch {}
+  });
+}
